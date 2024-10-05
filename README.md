@@ -1,5 +1,5 @@
 # Recomendaciones
-Antes de correr el proyecto porfavor obtener la versión mas reciente con el comando `git pull origin main` en la carpeta donde descomprimar el proyecto.
+Antes de correr el proyecto porfavor obtener la versión mas reciente con el comando `git pull origin main` en la carpeta donde se descromprima el proyecto.
 
 # Proyecto de Calificaciones
 
