@@ -37,7 +37,7 @@ La estructura del proyecto es la siguiente:
 
 1. Asegúrate de tener PostgreSQL instalado y en ejecución.
 2. Crea una base de datos llamada `Calificaciones`.
-3. Ejecuta el siguiente script SQL para crear la tabla `Materias`:
+3. Ejecuta el siguiente script SQL para crear las tablas junto con datos de prueba:
 
 ```sql
     drop database if exists calificaciones;
