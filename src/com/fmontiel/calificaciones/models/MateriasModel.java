@@ -1,9 +1,8 @@
 package com.fmontiel.calificaciones.models;
 
-
 import com.fmontiel.calificaciones.bin.ConnectionPgSql;
-import com.fmontiel.calificaciones.entities.Alumno;
-import com.fmontiel.calificaciones.parsers.AlumnosParser;
+import com.fmontiel.calificaciones.entities.Materia;
+import com.fmontiel.calificaciones.parsers.MateriasParser;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -16,15 +15,14 @@ import java.util.ArrayList;
  *
  * @author PC
  */
-public class AlumnosModel {
-    public ArrayList<Alumno> getAlumnos() throws SQLException {
+public class MateriasModel {
+    public ArrayList<Materia> getAll() throws SQLException {
         ConnectionPgSql pgsql = new ConnectionPgSql();
         Statement statement = pgsql.getConnection().createStatement();
         
-        ResultSet rs = statement.executeQuery("SELECT * FROM Alumnos");
-       
-        
-        
-        return AlumnosParser.parse(rs);
+        ResultSet rs = statement.executeQuery("SELECT * FROM Materias");
+
+        return MateriasParser.parse(rs);
     }
+    
 }

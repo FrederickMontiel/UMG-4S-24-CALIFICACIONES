@@ -4,32 +4,38 @@
  */
 package com.fmontiel.calificaciones.entities;
 
-import java.math.BigInteger;
-
 /**
  *
  * @author PC
  */
-public class Alumno {
-    BigInteger cui;
-    String nombres;
-    String apellidos;
+public class Grado {
+    int id;
+    String nombre;
+    char seccion;
+    int anio;
 
-    public Alumno(BigInteger cui, String nombres, String apellidos) {
-        this.cui = cui;
-        this.nombres = nombres;
-        this.apellidos = apellidos;
+    public Grado(int id, String nombre, char seccion, int anio) {
+        this.id = id;
+        this.nombre = nombre;
+        this.seccion = seccion;
+        this.anio = anio;
     }
 
-    public BigInteger getCui() {
-        return cui;
+    public int getId() {
+        return id;
     }
 
-    public String getNombres() {
-        return nombres;
+    public String getNombre() {
+        return nombre;
     }
 
-    public String getApellidos() {
-        return apellidos;
+    public Character getSeccion() {
+        return seccion;
     }
+
+    public int getAnio() {
+        return anio;
+    }
+
+    
 }

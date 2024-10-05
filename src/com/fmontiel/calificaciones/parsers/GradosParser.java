@@ -4,26 +4,27 @@
  */
 package com.fmontiel.calificaciones.parsers;
 
-import com.fmontiel.calificaciones.entities.Alumno;
+import com.fmontiel.calificaciones.entities.Grado;
 import java.util.ArrayList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 /**
  *
  * @author PC
  */
-public class AlumnosParser {
-    public static ArrayList<Alumno> parse(ResultSet rs) throws SQLException {
-        ArrayList<Alumno> lista = new ArrayList<>();
-        
-        while(rs.next()){
-            lista.add(new Alumno(
-              rs.getBigDecimal("cui").toBigInteger(),
-              rs.getString("nombres"),
-              rs.getString("apellidos")
-            ));
+public class GradosParser {
+    public static ArrayList<Grado> parse(ResultSet rs) throws SQLException {
+        ArrayList<Grado> lista = new ArrayList<>();
+
+        while (rs.next()) {
+            lista.add(new Grado(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getString("seccion").charAt(0),
+                    rs.getInt("anio")));
         }
-        
+
         return lista;
     }
 }

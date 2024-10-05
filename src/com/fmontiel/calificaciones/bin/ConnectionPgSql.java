@@ -13,27 +13,28 @@ import java.sql.*;
  */
 public class ConnectionPgSql {
     
-    Connection conn = null;
+    static Connection conn = null;
+    
+    //Patron de diseño Singleton, para no realizar mas de una conexión por sesión.
     public ConnectionPgSql(){
-        System.out.println("Se está iniciando la conexion");
-        String url = "jdbc:postgresql://localhost:5432/Calificaciones";
-        Properties props = new Properties();
-        props.setProperty("user", "postgres");
-        props.setProperty("password", "abc1234567");
-        props.setProperty("ssl", "false");
-        try{
-                    
+        if(ConnectionPgSql.conn == null){
+            String url = "jdbc:postgresql://localhost:5432/Calificaciones";
+            Properties props = new Properties();
+            props.setProperty("user", "postgres");
+            props.setProperty("password", "abc1234567");
+            props.setProperty("ssl", "false");
+            
+            try{
+                ConnectionPgSql.conn = DriverManager.getConnection(url, props);
+            }catch(Exception e){
 
-            this.conn = DriverManager.getConnection(url, props);
-            System.out.println("Se Conectó");
-        }catch(Exception e){
-            System.out.println("Error al conectar");
-            e.printStackTrace();
+                e.printStackTrace();
+            }
         }
     }
     
     public Connection getConnection(){
-        return this.conn;
+        return ConnectionPgSql.conn;
     }
     
     

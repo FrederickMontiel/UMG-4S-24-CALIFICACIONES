@@ -6,6 +6,7 @@ package com.fmontiel.calificaciones.system;
 
 import com.fmontiel.calificaciones.views.IndexView;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 /**
  *
@@ -20,6 +21,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -46,9 +48,13 @@ public class Main {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                
+                
                 IndexView index = new IndexView();
                 index.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                index.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                index.setLocationRelativeTo(null);
+                //index.setExtendedState(JFrame.MAXIMIZED_BOTH);
+             
                 
                 index.setVisible(true);
             }
