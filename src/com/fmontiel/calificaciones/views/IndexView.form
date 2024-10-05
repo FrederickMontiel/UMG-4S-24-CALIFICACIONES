@@ -227,6 +227,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Agregar Alumno"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="agregarAlumno"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="textFieldSeccion">
         </Component>
@@ -251,6 +254,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Materias"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openGradosView"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton3">
           <Properties>

@@ -69,6 +69,9 @@ public class Formulario extends javax.swing.JFrame {
 
         if (gm.firstWithNombreAndAnioAndSeccion(nombre, anio, grado.getSeccion()) == null) {
             gm.addGrado(grado);
+
+            this.textFieldNombre.setText("");
+
             onFinish.call(new JSONObject());
         } else {
             JOptionPane.showMessageDialog(this, "Ya existe una sección con el mismo nombre y año");
@@ -82,6 +85,10 @@ public class Formulario extends javax.swing.JFrame {
 
         if (g != null) {
             gm.editSeccion(g.getId(), grado);
+
+            this.nombre = grado.getNombre();
+            this.anio = grado.getAnio();
+
             onFinish.call(new JSONObject());
         } else {
             JOptionPane.showMessageDialog(this, "No hay info");

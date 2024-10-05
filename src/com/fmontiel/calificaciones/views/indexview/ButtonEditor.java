@@ -1,5 +1,6 @@
 package com.fmontiel.calificaciones.views.indexview;
 
+import com.fmontiel.calificaciones.interfaces.CallbackInterface;
 import com.fmontiel.calificaciones.interfaces.EditarCallback;
 import com.fmontiel.calificaciones.interfaces.EliminarCallback;
 import com.fmontiel.calificaciones.interfaces.VerCallback;
@@ -12,14 +13,19 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+import org.json.JSONObject;
+
 public class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
     private JPanel panel;
     private JButton btnVer;
     private JButton btnEditar;
     private JButton btnEliminar;
     private String currentCui;
+    private String nombres;
+    private String apellidos;
 
-    public ButtonEditor(JTable table, VerCallback verCallback, EditarCallback editarCallback, EliminarCallback eliminarCallback) {
+    public ButtonEditor(JTable table, CallbackInterface verCallback, CallbackInterface editarCallback,
+            CallbackInterface eliminarCallback) {
         panel = new JPanel();
         panel.setBackground(java.awt.Color.white);
 
@@ -33,7 +39,11 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (verCallback != null) {
-                    verCallback.ver(currentCui);
+                    JSONObject jo = new JSONObject();
+                    jo.put("cui", currentCui);
+                    jo.put("nombres", nombres);
+                    jo.put("apellidos", apellidos);
+                    verCallback.call(jo);
                 }
             }
         });
@@ -43,7 +53,11 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (editarCallback != null) {
-                    editarCallback.editar(currentCui);
+                    JSONObject jo = new JSONObject();
+                    jo.put("cui", currentCui);
+                    jo.put("nombres", nombres);
+                    jo.put("apellidos", apellidos);
+                    editarCallback.call(jo);
                 }
             }
         });
@@ -53,7 +67,11 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (eliminarCallback != null) {
-                    eliminarCallback.eliminar(currentCui);
+                    JSONObject jo = new JSONObject();
+                    jo.put("cui", currentCui);
+                    jo.put("nombres", nombres);
+                    jo.put("apellidos", apellidos);
+                    eliminarCallback.call(jo);
                 }
             }
         });
@@ -67,6 +85,8 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         // Obtener el valor del CUI de la fila actual
         currentCui = (String) table.getValueAt(row, 0);
+        nombres = (String) table.getValueAt(row, 1);
+        apellidos = (String) table.getValueAt(row, 2);
         return panel;
     }
 

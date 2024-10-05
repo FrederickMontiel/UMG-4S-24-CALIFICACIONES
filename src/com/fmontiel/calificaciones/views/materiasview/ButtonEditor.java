@@ -1,6 +1,8 @@
-package com.fmontiel.calificaciones.views.gradosview;
+package com.fmontiel.calificaciones.views.materiasview;
 
+import com.fmontiel.calificaciones.views.gradosview.*;
 import com.fmontiel.calificaciones.views.indexview.*;
+import com.fmontiel.calificaciones.interfaces.CallbackInterface;
 import com.fmontiel.calificaciones.interfaces.EditarCallback;
 import com.fmontiel.calificaciones.interfaces.EliminarCallback;
 import com.fmontiel.calificaciones.interfaces.GradosRowListenerInterface;
@@ -22,38 +24,47 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
     private JButton btnEditar;
     private JButton btnEliminar;
     private String nombre;
-    private int anio;
+    private int id;
 
-    public ButtonEditor(JTable table, GradosRowListenerInterface callback) {
+    public ButtonEditor(JTable table, CallbackInterface verCallback, CallbackInterface addCallback,
+            CallbackInterface eliminarCallback) {
         panel = new JPanel();
         panel.setBackground(java.awt.Color.white);
 
-        btnVer = new JButton("Secciones");
+        // btnVer = new JButton("Secciones");
         btnEditar = new JButton("Editar");
         btnEliminar = new JButton("Eliminar");
 
         // Agregar ActionListener para el botón "Ver"
         // Agregar ActionListener para el botón "Ver"
-        btnVer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (callback != null) {
-                    JSONObject jo = new JSONObject();
-
-                    jo.put("nombre", nombre);
-                    jo.put("anio", anio);
-
-                    callback.onVer(jo);
-                }
-            }
-        });
+        /*
+         * btnVer.addActionListener(new ActionListener() {
+         * 
+         * @Override
+         * public void actionPerformed(ActionEvent e) {
+         * if (verCallback != null) {
+         * JSONObject jo = new JSONObject();
+         * 
+         * jo.put("nombre", nombre);
+         * jo.put("anio", anio);
+         * 
+         * verCallback.call(jo);
+         * }
+         * }
+         * });
+         */
 
         // Agregar ActionListener para el botón "Editar"
         btnEditar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (callback != null) {
-                    callback.onFinish(null);
+                if (addCallback != null) {
+                    JSONObject jo = new JSONObject();
+
+                    jo.put("id", id);
+                    jo.put("nombre", nombre);
+
+                    addCallback.call(jo);
                 }
             }
         });
@@ -62,13 +73,17 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
         btnEliminar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (callback != null) {
-                    callback.onFinish(null);
+                if (eliminarCallback != null) {
+                    JSONObject jo = new JSONObject();
+
+                    jo.put("id", id);
+
+                    eliminarCallback.call(jo);
                 }
             }
         });
 
-        panel.add(btnVer);
+        // panel.add(btnVer);
         panel.add(btnEditar);
         panel.add(btnEliminar);
     }
@@ -76,8 +91,8 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         // Obtener el valor del CUI de la fila actual
-        nombre = (String) table.getValueAt(row, 0);
-        anio = Integer.parseInt((String) table.getValueAt(row, 1));
+        id = (int) table.getValueAt(row, 0);
+        nombre = (String) table.getValueAt(row, 1);
         return panel;
     }
 

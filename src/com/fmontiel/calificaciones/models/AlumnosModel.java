@@ -96,4 +96,42 @@ public class AlumnosModel {
             return false;
         }
     }
+
+    public void agregarAlumno(Alumno alumno) throws SQLException {
+
+        ConnectionPgSql pgsql = new ConnectionPgSql();
+        // Statement statement = pgsql.getConnection().createStatement();
+        String query = "INSERT INTO Alumnos (cui, nombres, apellidos) VALUES (" + alumno.getCui() + ", ?, ?)";
+
+        PreparedStatement ps = pgsql.getConnection().prepareStatement(query);
+
+        ps.setString(1, alumno.getNombres());
+        ps.setString(2, alumno.getApellidos());
+
+        ps.executeUpdate();
+
+    }
+
+    public void actualizarAlumno(BigInteger id, Alumno alumno) throws SQLException {
+        ConnectionPgSql pgsql = new ConnectionPgSql();
+        // Statement statement = pgsql.getConnection().createStatement();
+        String query = "UPDATE Alumnos SET cui = " + alumno.getCui() + ", nombres = ?, apellidos = ? WHERE cui = " + id;
+
+        PreparedStatement ps = pgsql.getConnection().prepareStatement(query);
+
+        ps.setString(1, alumno.getNombres());
+        ps.setString(2, alumno.getApellidos());
+
+        ps.executeUpdate();
+    }
+
+    public boolean existWithCUI(BigInteger cui) throws SQLException {
+        ConnectionPgSql pgsql = new ConnectionPgSql();
+        Statement statement = pgsql.getConnection().createStatement();
+        String query = "SELECT * FROM Alumnos WHERE cui = " + cui;
+
+        ResultSet rs = statement.executeQuery(query);
+
+        return rs.next();
+    }
 }

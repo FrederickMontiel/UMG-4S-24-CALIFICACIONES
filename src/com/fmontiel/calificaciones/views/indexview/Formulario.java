@@ -2,15 +2,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.fmontiel.calificaciones.views.gradosview;
+package com.fmontiel.calificaciones.views.indexview;
 
-import com.fmontiel.calificaciones.views.seccionesview.*;
+import com.fmontiel.calificaciones.views.materiasview.*;
+import com.fmontiel.calificaciones.entities.Alumno;
 import com.fmontiel.calificaciones.entities.Grado;
+import com.fmontiel.calificaciones.entities.Materia;
 import com.fmontiel.calificaciones.interfaces.CallbackInterface;
+import com.fmontiel.calificaciones.models.AlumnosModel;
 import com.fmontiel.calificaciones.models.GradosModel;
+import com.fmontiel.calificaciones.models.MateriasModel;
+
+import java.math.BigInteger;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import org.json.JSONObject;
@@ -21,8 +25,9 @@ import org.json.JSONObject;
  */
 public class Formulario extends javax.swing.JFrame {
 
-    private String nombre;
-    private int anio;
+    private BigInteger cui;
+    private String nombres;
+    private String apellidos;
 
     private CallbackInterface onFinish;
     private Formulario.Modos modo;
@@ -34,32 +39,36 @@ public class Formulario extends javax.swing.JFrame {
 
     public Formulario(
             Formulario.Modos modo,
-            String nombre,
-            int anio,
+            BigInteger cui,
+            String nombres,
+            String apellidos,
             CallbackInterface onFinish) {
         this.modo = modo;
-        this.nombre = nombre;
-        this.anio = anio;
+        this.cui = cui;
+        this.nombres = nombres;
+        this.apellidos = apellidos;
         this.onFinish = onFinish;
 
         initComponents();
 
         if (modo == Formulario.Modos.EDITAR) {
-            textFieldNombre.setText(nombre);
-            textFieldAnio.setText(String.valueOf(anio));
+            textFieldCui.setText(String.valueOf(this.cui));
+            textFieldNombre.setText(this.nombres);
+            textFieldApellidos.setText(this.apellidos);
 
             btnAccion.setText("Editar");
         }
     }
 
-    public void add(Grado grado) throws SQLException {
-        GradosModel gm = new GradosModel();
-        boolean g = gm.thereMoreThanCeroWithNombreAndAnio(nombre, anio);
+    public void add(Alumno alumno) throws SQLException {
+        AlumnosModel gm = new AlumnosModel();
+        boolean g = gm.existWithCUI(cui);
         if (!g) {
-            gm.addGrado(grado);
+            gm.agregarAlumno(alumno);
 
+            this.textFieldCui.setText("");
             this.textFieldNombre.setText("");
-            this.textFieldAnio.setText("");
+            this.textFieldApellidos.setText("");
 
             onFinish.call(new JSONObject());
         } else {
@@ -68,22 +77,35 @@ public class Formulario extends javax.swing.JFrame {
 
     }
 
-    public void editar(Grado grado) {
-        GradosModel gm = new GradosModel();
-        boolean g = gm.thereMoreThanCeroWithNombreAndAnio(nombre, anio);
-
-        if (g) {
-            gm.editAllByNombreAndAnio(nombre, anio, this.textFieldNombre.getText(),
-                    Integer.parseInt(this.textFieldAnio.getText()));
-
-            this.nombre = this.textFieldNombre.getText();
-            this.anio = Integer.parseInt(this.textFieldAnio.getText());
-
-            onFinish.call(new JSONObject());
-
-        } else {
-            JOptionPane.showMessageDialog(this, "No hay grados");
+    public void editar(Alumno alumno) throws SQLException {
+        System.out.println("Editar");
+        System.out.println(alumno.getCui());
+        System.out.println(alumno.getNombres());
+        System.out.println(alumno.getApellidos());
+        System.out.println(cui);
+        AlumnosModel gm = new AlumnosModel();
+        /*
+         * boolean g = gm.existWithName(textFieldNombre.getText());
+         * 
+         * if (g) {
+         */
+        try {
+            gm.actualizarAlumno(cui, alumno);
+        } catch (Exception e) {
+            System.out.println(e);
         }
+
+        this.cui = BigInteger.valueOf(Integer.parseInt(this.textFieldCui.getText()));
+        this.nombres = this.textFieldNombre.getText();
+        this.apellidos = this.textFieldApellidos.getText();
+
+        onFinish.call(new JSONObject());
+
+        /*
+         * } else {
+         * JOptionPane.showMessageDialog(this, "No hay grados");
+         * }
+         */
     }
 
     /**
@@ -95,6 +117,9 @@ public class Formulario extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -103,8 +128,10 @@ public class Formulario extends javax.swing.JFrame {
         textFieldNombre = new javax.swing.JTextField();
         btnAccion = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        textFieldCui = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        textFieldAnio = new javax.swing.JTextField();
+        textFieldApellidos = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
@@ -112,7 +139,7 @@ public class Formulario extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Grados");
+        jLabel1.setText("Alumnos");
 
         btnAccion.setText("Agregar");
         btnAccion.addActionListener(new java.awt.event.ActionListener() {
@@ -121,9 +148,17 @@ public class Formulario extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Nombre");
+        jLabel2.setText("Nombres");
 
-        jLabel3.setText("Año");
+        textFieldCui.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textFieldCUI(evt);
+            }
+        });
+
+        jLabel3.setText("Cui");
+
+        jLabel4.setText("Apellidos");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -139,8 +174,11 @@ public class Formulario extends javax.swing.JFrame {
                                         .addComponent(textFieldNombre)
                                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 454,
                                                 Short.MAX_VALUE)
-                                        .addComponent(textFieldAnio)
+                                        .addComponent(textFieldCui)
                                         .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 454,
+                                                Short.MAX_VALUE)
+                                        .addComponent(textFieldApellidos)
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 454,
                                                 Short.MAX_VALUE))
                                 .addContainerGap()));
         jPanel1Layout.setVerticalGroup(
@@ -149,47 +187,54 @@ public class Formulario extends javax.swing.JFrame {
                                 .addContainerGap()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(textFieldCui, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(textFieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE,
                                         javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel3)
+                                .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textFieldAnio, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                .addComponent(textFieldApellidos, javax.swing.GroupLayout.PREFERRED_SIZE,
                                         javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(12, 12, 12)
-                                .addComponent(btnAccion)
-                                .addContainerGap(10, Short.MAX_VALUE)));
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnAccion, javax.swing.GroupLayout.PREFERRED_SIZE, 34,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         getContentPane().add(jPanel1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void textFieldCUI(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_textFieldCUI
+        // TODO add your handling code here:
+    }// GEN-LAST:event_textFieldCUI
+
     private void btnRealizaraccion(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnRealizaraccion
+
         try {
-
             if (Formulario.Modos.AGREGAR == modo) {
-
-                add(new Grado(
-                        0,
+                add(new Alumno(
+                        BigInteger.valueOf(Integer.parseInt(textFieldCui.getText())),
                         textFieldNombre.getText(),
-                        'A',
-                        Integer.parseInt(textFieldAnio.getText())));
-
+                        textFieldApellidos.getText()));
             } else if (Formulario.Modos.EDITAR == modo) {
 
-                editar(new Grado(
-                        0,
+                editar(new Alumno(
+                        BigInteger.valueOf(Integer.parseInt(textFieldCui.getText())),
                         textFieldNombre.getText(),
-                        'B',
-                        Integer.parseInt(textFieldAnio.getText())));
+                        textFieldApellidos.getText()));
 
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(Formulario.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            System.out.println(e);
         }
+
     }// GEN-LAST:event_btnRealizaraccion
 
     /**
@@ -236,8 +281,10 @@ public class Formulario extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField textFieldAnio;
+    private javax.swing.JTextField textFieldApellidos;
+    private javax.swing.JTextField textFieldCui;
     private javax.swing.JTextField textFieldNombre;
     // End of variables declaration//GEN-END:variables
 }

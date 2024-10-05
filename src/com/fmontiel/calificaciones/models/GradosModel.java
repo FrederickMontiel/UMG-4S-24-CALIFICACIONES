@@ -79,6 +79,18 @@ public class GradosModel {
         return false;
     }
 
+    public void deleteAllByNombreAndAnio(String nombre, int anio) throws SQLException  {
+        ConnectionPgSql pgsql = new ConnectionPgSql();
+        
+            PreparedStatement statement = pgsql.getConnection().prepareStatement(
+                    "DELETE FROM Grados WHERE nombre = ? AND anio = ?");
+            statement.setString(1, nombre);
+            statement.setInt(2, anio);
+
+            statement.executeUpdate();
+        
+    }
+
     public Grado getById(int id) {
         ConnectionPgSql pgsql = new ConnectionPgSql();
         try {
@@ -130,6 +142,39 @@ public class GradosModel {
         }
 
         return null;
+    }
+
+    public boolean editAllByNombreAndAnio(String nombre, int anio, String newNombre, int newAnio) {
+        ConnectionPgSql pgsql = new ConnectionPgSql();
+        try {
+            Statement statement = pgsql.getConnection().createStatement();
+            return statement.executeUpdate("UPDATE Grados SET nombre = '" + newNombre + "', anio = " + newAnio
+                    + " WHERE nombre = '" + nombre + "' AND anio = " + anio) > 0;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean thereMoreThanCeroWithNombreAndAnio(String nombre, int anio) {
+        ConnectionPgSql pgsql = new ConnectionPgSql();
+        try {
+            PreparedStatement statement = pgsql.getConnection().prepareStatement(
+                    "SELECT COUNT(*) FROM Grados WHERE nombre like ? AND anio = ?");
+
+            statement.setString(1, nombre);
+            statement.setInt(2, anio);
+
+            ResultSet rs = statement.executeQuery();
+
+            rs.next();
+            return rs.getInt(1) >= 1;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return false;
     }
 
     public void editSeccion(int id, Grado grado) {

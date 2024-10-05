@@ -1,6 +1,7 @@
 package com.fmontiel.calificaciones.views.gradosview;
 
 import com.fmontiel.calificaciones.views.indexview.*;
+import com.fmontiel.calificaciones.interfaces.CallbackInterface;
 import com.fmontiel.calificaciones.interfaces.EditarCallback;
 import com.fmontiel.calificaciones.interfaces.EliminarCallback;
 import com.fmontiel.calificaciones.interfaces.GradosRowListenerInterface;
@@ -24,7 +25,8 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
     private String nombre;
     private int anio;
 
-    public ButtonEditor(JTable table, GradosRowListenerInterface callback) {
+    public ButtonEditor(JTable table, CallbackInterface verCallback, CallbackInterface addCallback,
+            CallbackInterface eliminarCallback) {
         panel = new JPanel();
         panel.setBackground(java.awt.Color.white);
 
@@ -37,13 +39,13 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
         btnVer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (callback != null) {
+                if (verCallback != null) {
                     JSONObject jo = new JSONObject();
 
                     jo.put("nombre", nombre);
                     jo.put("anio", anio);
 
-                    callback.onVer(jo);
+                    verCallback.call(jo);
                 }
             }
         });
@@ -52,8 +54,13 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
         btnEditar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (callback != null) {
-                    callback.onFinish(null);
+                if (addCallback != null) {
+                    JSONObject jo = new JSONObject();
+
+                    jo.put("nombre", nombre);
+                    jo.put("anio", anio);
+
+                    addCallback.call(jo);
                 }
             }
         });
@@ -62,8 +69,13 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
         btnEliminar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (callback != null) {
-                    callback.onFinish(null);
+                if (eliminarCallback != null) {
+                    JSONObject jo = new JSONObject();
+
+                    jo.put("nombre", nombre);
+                    jo.put("anio", anio);
+
+                    eliminarCallback.call(jo);
                 }
             }
         });

@@ -13,7 +13,7 @@ import org.json.JSONObject;
 public class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
     private String seccion;
     private JPanel panel;
-    
+
     public ButtonEditor(JTable table, CallbackInterface addCallback, CallbackInterface eliminarCallback) {
         panel = new JPanel();
         panel.setBackground(java.awt.Color.white);
@@ -44,7 +44,7 @@ public class ButtonEditor extends AbstractCellEditor implements TableCellEditor 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         seccion = String.valueOf(table.getValueAt(row, 0));
-        
+
         return panel;
     }
 

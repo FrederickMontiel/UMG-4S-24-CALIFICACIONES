@@ -16,12 +16,14 @@ import org.json.JSONObject;
 
 import com.fmontiel.calificaciones.entities.Alumno;
 import com.fmontiel.calificaciones.entities.Grado;
+import com.fmontiel.calificaciones.entities.Materia;
 import com.fmontiel.calificaciones.interfaces.GradosRowListenerInterface;
 import com.fmontiel.calificaciones.models.GradosModel;
+import com.fmontiel.calificaciones.models.MateriasModel;
 import com.fmontiel.calificaciones.views.IndexView.PaddingCellRenderer;
-import com.fmontiel.calificaciones.views.gradosview.ButtonEditor;
-import com.fmontiel.calificaciones.views.gradosview.ButtonRenderer;
-import com.fmontiel.calificaciones.views.gradosview.Formulario;
+import com.fmontiel.calificaciones.views.materiasview.ButtonEditor;
+import com.fmontiel.calificaciones.views.materiasview.ButtonRenderer;
+import com.fmontiel.calificaciones.views.materiasview.Formulario;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -32,18 +34,18 @@ import com.fmontiel.calificaciones.views.gradosview.Formulario;
  *
  * @author PC
  */
-public class GradosView extends javax.swing.JFrame {
-    GradosModel gm;
+public class Asignaciones extends javax.swing.JFrame {
+    MateriasModel gm;
 
-    ArrayList<Grado> listaGrados;
+    ArrayList<Materia> listaGrados;
 
     /**
      * Creates new form GradosView
      */
-    public GradosView(
+    public Asignaciones(
 
     ) {
-        gm = new GradosModel();
+        gm = new MateriasModel();
         initComponents();
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -58,7 +60,7 @@ public class GradosView extends javax.swing.JFrame {
 
     public void obtenerGrados() {
         try {
-            listaGrados = gm.getAllAndGroupByName();
+            listaGrados = gm.getAll();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,23 +69,22 @@ public class GradosView extends javax.swing.JFrame {
     public void rellenarTabla() {
         DefaultTableModel modelo = new DefaultTableModel(
                 new Object[][] {},
-                new String[] { "Nombres", "Año", "Acciones" }) {
+                new String[] { "ID", "Nombre", "Acciones" }) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 2; // Solo la columna de "Acciones" es editable para permitir los
+                return column == 2; // Solo la columna "Acciones" es editable
             }
         };
 
         // Limpiar las filas existentes
         modelo.setRowCount(0);
 
-        // Agregar los alumnos a la tabla
-        for (Grado alumno : listaGrados) {
+        // Poblar la tabla con datos de Grados
+        for (Materia grado : listaGrados) {
             Object[] fila = {
-                    alumno.getNombre(),
-                    String.valueOf(alumno.getAnio()),
-
-                    null // Este es el lugar para los botones (Ver / Editar / Eliminar)
+                    grado.getId(), // Mostrar el 'id'
+                    grado.getNombre(), // Mostrar el 'nombre'
+                    null // Para los botones de acciones (Ver/Editar/Eliminar)
             };
             modelo.addRow(fila);
         }
@@ -91,45 +92,37 @@ public class GradosView extends javax.swing.JFrame {
         jTable1.setModel(modelo);
         jTable1.setDefaultRenderer(Object.class, new PaddingCellRenderer());
 
-        // Asignar el renderizador de botones
+        // Configurar el renderizador y editor de botones para la columna "Acciones"
         jTable1.getColumnModel().getColumn(2).setCellRenderer(new ButtonRenderer());
-
-        // Asignar el editor de botones
         jTable1.getColumnModel().getColumn(2).setCellEditor(new ButtonEditor(
                 jTable1,
                 (JSONObject jo) -> {
-                    openSeccionesView(jo);
-                },
-                (JSONObject jo) -> {
+                }, // Acción de Ver
+                (JSONObject jo) -> { // Acción de Editar
                     Formulario f = new Formulario(
                             Formulario.Modos.EDITAR,
+                            jo.getInt("id"),
                             jo.getString("nombre"),
-                            jo.getInt("anio"),
                             (JSONObject jo1) -> {
                                 this.obtenerGrados();
                                 this.rellenarTabla();
                             });
                     f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     f.setLocationRelativeTo(null);
-
                     f.setVisible(true);
-                    // openSeccionesView(jo);
                 },
-                (JSONObject jo) -> {
-                    // openSeccionesView(jo);
+                (JSONObject jo) -> { // Acción de Eliminar
                     try {
-                        gm.deleteAllByNombreAndAnio(jo.getString("nombre"), jo.getInt("anio"));
+                        gm.deleteMateria(jo.getInt("id"));
                         obtenerGrados();
                         rellenarTabla();
                     } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(this,
-                                "No se pudo eliminar el grado, porque algun alumno está inscrito en él");
+                                "No se pudo eliminar el grado porque algún alumno está inscrito en él.");
                     }
-                }
+                }));
 
-        ));
-
-        jTable1.setRowHeight(40);
+        jTable1.setRowHeight(40); // Establecer altura de fila
     }
 
     public void openSeccionesView(JSONObject jo) {
@@ -152,7 +145,9 @@ public class GradosView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -162,8 +157,6 @@ public class GradosView extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -172,15 +165,16 @@ public class GradosView extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][] {
-                        { null, null, null, null },
-                        { null, null, null, null },
-                        { null, null, null, null },
-                        { null, null, null, null }
-                },
-                new String[] {
-                        "Title 1", "Title 2", "Title 3", "Title 4"
-                }));
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
         jScrollPane1.setViewportView(jTable1);
 
         jButton1.setText("Agregar");
@@ -190,11 +184,9 @@ public class GradosView extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Grados");
+        jLabel1.setText("Materias");
 
         jLabel2.setText("Filtrar por: ");
-
-        jLabel3.setText("Año");
 
         jButton2.setText("Regresar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -206,53 +198,42 @@ public class GradosView extends javax.swing.JFrame {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 868,
-                                                Short.MAX_VALUE)
-                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGap(0, 0, Short.MAX_VALUE)
-                                                .addComponent(jButton1))
-                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(jLabel2)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 584,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jLabel3)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jTextField2))
-                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGroup(jPanel1Layout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jLabel1)
-                                                        .addComponent(jButton2))
-                                                .addGap(0, 0, Short.MAX_VALUE)))
-                                .addContainerGap()));
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 868, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jButton2))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1)))
+                .addContainerGap())
+        );
         jPanel1Layout.setVerticalGroup(
-                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jButton2)
-                                .addGap(8, 8, 8)
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jLabel2)
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel3)
-                                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)
-                                .addContainerGap()));
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton2)
+                .addGap(8, 8, 8)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addContainerGap())
+        );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -262,8 +243,8 @@ public class GradosView extends javax.swing.JFrame {
     private void openAgregarView(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_openAgregarView
         Formulario f = new Formulario(
                 Formulario.Modos.AGREGAR,
-                "",
                 0,
+                "",
                 (JSONObject jo1) -> {
                     this.obtenerGrados();
                     this.rellenarTabla();
@@ -330,11 +311,9 @@ public class GradosView extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }
